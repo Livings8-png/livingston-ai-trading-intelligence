@@ -311,6 +311,194 @@ function clearDrawings(){
  chartStatus.textContent='Price lines cleared. Reload chart to reset.';
 }
 window.addEventListener('load',()=>{initChart();showJournal()});
+ 
+/* ===== LIVINGSTON BUY / SELL ZONE ENGINE ===== */
+
+let livingstonLines = [];
+
+function startLivingstonEngine() {
+ const chartBox = document.getElementById('chart');
+ if (!chartBox || document.getElementById('livingstonEngine')) return;
+
+ const panel = document.createElement('div');
+ panel.id = 'livingstonEngine';
+ panel.className = 'card';
+ panel.innerHTML = `
+  <h2>◈ LIVINGSTON AI ZONE ENGINE</h2>
+  <p class="muted">ICT • SMC • FVG • ORDER BLOCK • LIQUIDITY</p>
+  <button class="action" id="analyzeMarket">ANALYZE MARKET</button>
+  <div id="engineResult" class="signal" style="margin-top:12px">
+   <h2>WAITING FOR ANALYSIS</h2>
+   <p class="muted">Press the button to analyze the available candles.</p>
+  </div>
+ `;
+ chartBox.parentElement.appendChild(panel);
+
+ document.getElementById('analyzeMarket').onclick = analyzeLivingston;
+}
+
+function analyzeLivingston() {
+ if (!series) return;
+
+ const candles = series.data();
+ const output = document.getElementById('engineResult');
+
+ if (!candles || candles.length < 20) {
+  output.innerHTML = '<h2>INSUFFICIENT DATA</h2>';
+  return;
+ }
+
+ const last = candles[candles.length - 1];
+ const previous = candles.slice(-20, -1);
+
+ let bullishFVG = null;
+ let bearishFVG = null;
+ let bullishOB = null;
+ let bearishOB = null;
+ let bullishSweep = false;
+ let bearishSweep = false;
+
+ // FVG DETECTION
+ for (let i = Math.max(2, candles.length - 12); i < candles.length; i++) {
+  const a = candles[i - 2];
+  const c = candles[i];
+
+  if (a.high < c.low) {
+   bullishFVG = {low:a.high, high:c.low};
+  }
+
+  if (a.low > c.high) {
+   bearishFVG = {low:c.high, high:a.low};
+  }
+ }
+
+ // LIQUIDITY SWEEP
+ const recentLow = Math.min(...previous.slice(-10).map(c=>c.low));
+ const recentHigh = Math.max(...previous.slice(-10).map(c=>c.high));
+
+ bullishSweep = last.low < recentLow && last.close > recentLow;
+ bearishSweep = last.high > recentHigh && last.close < recentHigh;
+
+ // BASIC ORDER BLOCK DETECTION
+ for (let i = candles.length - 2; i >= Math.max(1,candles.length - 10); i--) {
+  const c = candles[i];
+  const next = candles[i + 1];
+
+  if (c.close < c.open && next.close > c.high) {
+   bullishOB = {low:c.low,high:c.open};
+   break;
+  }
+ }
+
+ for (let i = candles.length - 2; i >= Math.max(1,candles.length - 10); i--) {
+  const c = candles[i];
+  const next = candles[i + 1];
+
+  if (c.close > c.open && next.close < c.low) {
+   bearishOB = {low:c.open,high:c.high};
+   break;
+  }
+ }
+
+ // SCORING
+ let buyScore = 0;
+ let sellScore = 0;
+
+ if (bullishFVG) buyScore += 30;
+ if (bullishOB) buyScore += 30;
+ if (bullishSweep) buyScore += 40;
+
+ if (bearishFVG) sellScore += 30;
+ if (bearishOB) sellScore += 30;
+ if (bearishSweep) sellScore += 40;
+
+ // REMOVE OLD PRICE LINES
+ livingstonLines.forEach(line=>{
+  series.removePriceLine(line);
+ });
+ livingstonLines = [];
+
+ let signal = 'NO TRADE';
+ let zone = null;
+ let score = Math.max(buyScore,sellScore);
+
+ if (buyScore >= 60 && buyScore > sellScore) {
+  signal = 'BUY';
+  zone = bullishFVG || bullishOB;
+ } else if (sellScore >= 60 && sellScore > buyScore) {
+  signal = 'SELL';
+  zone = bearishFVG || bearishOB;
+ }
+
+ let result = '';
+
+ if (zone && signal !== 'NO TRADE') {
+  const entry = (zone.high + zone.low) / 2;
+  const distance = Math.abs(zone.high - zone.low);
+
+  const sl = signal === 'BUY'
+   ? zone.low - distance * 0.5
+   : zone.high + distance * 0.5;
+
+  const risk = Math.abs(entry - sl);
+
+  const tp1 = signal === 'BUY' ? entry + risk : entry - risk;
+  const tp2 = signal === 'BUY' ? entry + risk * 2 : entry - risk * 2;
+  const tp3 = signal === 'BUY' ? entry + risk * 3 : entry - risk * 3;
+
+  livingstonLines.push(
+   series.createPriceLine({
+    price:zone.high,
+    color:signal === 'BUY' ? '#20d69a' : '#ff6478',
+    lineWidth:2,
+    title:signal + ' ZONE HIGH'
+   })
+  );
+
+  livingstonLines.push(
+   series.createPriceLine({
+    price:zone.low,
+    color:signal === 'BUY' ? '#20d69a' : '#ff6478',
+    lineWidth:2,
+    title:signal + ' ZONE LOW'
+   })
+  );
+
+  result = `
+   <h2 class="${signal==='BUY'?'green':'red'}">${signal} SETUP</h2>
+   <div class="score">${score}/100</div>
+   <p>Potential entry: <b>${entry.toFixed(2)}</b></p>
+   <p>Stop Loss: <b>${sl.toFixed(2)}</b></p>
+   <p>TP1: <b>${tp1.toFixed(2)}</b></p>
+   <p>TP2: <b>${tp2.toFixed(2)}</b></p>
+   <p>TP3: <b>${tp3.toFixed(2)}</b></p>
+   <p class="muted">Zone: ${zone.low.toFixed(2)} - ${zone.high.toFixed(2)}</p>
+  `;
+ } else {
+  result = `
+   <h2>NO TRADE</h2>
+   <div class="score">${score}/100</div>
+   <p class="muted">Conditions are not sufficient for a setup.</p>
+  `;
+ }
+
+ output.innerHTML = `
+  ${result}
+  <hr style="border-color:#253447">
+  <p>Bullish FVG: ${bullishFVG?'Detected':'Not detected'}</p>
+  <p>Bearish FVG: ${bearishFVG?'Detected':'Not detected'}</p>
+  <p>Bullish OB: ${bullishOB?'Detected':'Not detected'}</p>
+  <p>Bearish OB: ${bearishOB?'Detected':'Not detected'}</p>
+  <p>Bullish Liquidity Sweep: ${bullishSweep?'Yes':'No'}</p>
+  <p>Bearish Liquidity Sweep: ${bearishSweep?'Yes':'No'}</p>
+  <p class="muted">Prototype score, not AI probability. Simulated market data only.</p>
+ `;
+}
+
+window.addEventListener('load',startLivingstonEngine);
+
+/* ===== END LIVINGSTON ENGINE ===== */
+     
 </script>
 </body>
 </html>
