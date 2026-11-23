@@ -1,1 +1,316 @@
 
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d14">
+<title>LIVINGSTON AI ELITE PRO</title>
+<script src="https://unpkg.com/lightweight-charts@4.2.2/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+:root{--bg:#080d14;--panel:#111b27;--line:#253447;--green:#20d69a;--gold:#d9b45c;--red:#ff6478;--muted:#8798ad}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#edf3fa;font-family:Arial,sans-serif}
+header{padding:17px;background:#101925;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:20px;font-weight:900;color:var(--gold);letter-spacing:1px}
+.sub{font-size:10px;color:var(--muted);margin-top:5px}
+.status{font-size:10px;color:var(--green);border:1px solid #245b4b;padding:6px;border-radius:20px}
+nav{display:flex;overflow:auto;gap:7px;padding:10px;background:#101925;position:sticky;top:0;z-index:5}
+button,select,input{font:inherit}
+button{background:#1a293a;border:1px solid #34465b;color:white;padding:10px 13px;border-radius:8px;cursor:pointer}
+button.active{background:#12694e;border-color:var(--green)}
+main{max-width:1100px;margin:auto;padding:12px}
+.page{display:none}.page.active{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+h2{font-size:16px;margin:0 0 13px}
+h3{font-size:12px;color:var(--muted);font-weight:500}
+.muted{color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.stat{background:#172537;padding:12px;border-radius:9px}
+.value{font-size:18px;font-weight:bold;margin-top:7px}
+.green{color:var(--green)}.red{color:var(--red)}.gold{color:var(--gold)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pill{font-size:10px;border-radius:20px;padding:5px 8px;background:#263447;color:#dce6f2}
+#chart{height:340px;width:100%;position:relative}
+.tools{display:flex;gap:6px;overflow:auto;padding:8px 0}
+.tools button{font-size:11px;padding:8px}
+#chartStatus{font-size:10px;color:var(--gold)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+td{padding:10px 5px;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right}
+input,select,textarea{width:100%;padding:11px;background:#0b1420;border:1px solid #34465b;color:white;border-radius:8px;margin:6px 0 12px}
+label{font-size:12px;color:var(--muted)}
+.action{width:100%;background:#12694e;border:0;margin-top:8px}
+.score{font-size:34px;color:var(--gold);font-weight:bold}
+.stars{color:var(--gold);font-size:23px;letter-spacing:3px}
+.signal{border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}
+footer{text-align:center;color:var(--muted);font-size:10px;padding:22px}
+</style>
+</head>
+<body>
+<header>
+ <div>
+  <div class="logo">◈ LIVINGSTON</div>
+  <div class="sub">AI ELITE PRO • INSTITUTIONAL MARKET ANALYSIS</div>
+ </div>
+ <span class="status">● DEMO MODE</span>
+</header>
+
+<nav>
+ <button class="active" onclick="page('home',this)">Dashboard</button>
+ <button onclick="page('chartPage',this)">Chart</button>
+ <button onclick="page('analysis',this)">AI Analysis</button>
+ <button onclick="page('fundamental',this)">Fundamental</button>
+ <button onclick="page('risk',this)">Risk Manager</button>
+ <button onclick="page('journal',this)">Journal</button>
+</nav>
+
+<main>
+<section id="home" class="page active">
+ <div class="card">
+  <div class="row">
+   <div><h3>MAIN INSTRUMENT</h3><h2>XAUUSD · GOLD</h2></div>
+   <span class="pill">DEMO DATA</span>
+  </div>
+  <div class="value gold">Market data not connected</div>
+  <p class="muted">Aucun prix réel n'est affiché pour le moment.</p>
+ </div>
+ <div class="grid">
+  <div class="stat"><h3>AI MARKET BIAS</h3><div class="value">WAITING</div></div>
+  <div class="stat"><h3>SETUP QUALITY</h3><div class="value gold">0 / 100</div></div>
+  <div class="stat"><h3>TECHNICAL</h3><div class="value">Pending</div></div>
+  <div class="stat"><h3>FUNDAMENTAL</h3><div class="value">Pending</div></div>
+ </div>
+ <div class="card" style="margin-top:12px">
+  <h2>Livingston Elite Signal</h2>
+  <div class="signal">
+   <div class="stars">☆☆☆☆☆</div>
+   <h2>NO TRADE</h2>
+   <p class="muted">Waiting for verified market data and confirmations.</p>
+  </div>
+ </div>
+ <div class="card">
+  <h2>Analysis modules</h2>
+  <table>
+   <tr><td>Technical analysis</td><td class="gold">Not connected</td></tr>
+   <tr><td>ICT / SMC engine</td><td class="gold">Not connected</td></tr>
+   <tr><td>Fundamental analysis</td><td class="gold">Not connected</td></tr>
+   <tr><td>Macro & sentiment</td><td class="gold">Not connected</td></tr>
+   <tr><td>Market data feed</td><td class="gold">Not connected</td></tr>
+  </table>
+ </div>
+</section>
+
+<section id="chartPage" class="page">
+ <div class="card">
+  <div class="row"><h2>XAUUSD CHART</h2><span class="pill">SIMULATED</span></div>
+  <div class="tools">
+   <button onclick="timeframe('M1')">M1</button>
+   <button onclick="timeframe('M5')">M5</button>
+   <button onclick="timeframe('M15')">M15</button>
+   <button onclick="timeframe('H1')">H1</button>
+   <button onclick="timeframe('H4')">H4</button>
+   <button onclick="timeframe('D1')">D1</button>
+  </div>
+  <div class="tools">
+   <button onclick="draw('trend')">Trendline</button>
+   <button onclick="draw('horizontal')">Horizontal</button>
+   <button onclick="draw('rectangle')">Rectangle</button>
+   <button onclick="draw('fib')">Fibonacci</button>
+   <button onclick="clearDrawings()">Clear drawings</button>
+  </div>
+  <div id="chart"></div>
+  <p id="chartStatus">Demonstration chart. No live prices.</p>
+ </div>
+ <div class="card">
+  <h2>Drawing instructions</h2>
+  <p class="muted">Choose a drawing tool, then tap two points on the chart. These tools are an initial prototype and will be improved.</p>
+ </div>
+</section>
+
+<section id="analysis" class="page">
+ <div class="card">
+  <h2>Multi-factor AI Analysis</h2>
+  <p class="muted">The following categories define the future scoring engine. No live analysis is performed yet.</p>
+  <table>
+   <tr><td>Technical / Price Action</td><td>25 points</td></tr>
+   <tr><td>ICT / SMC</td><td>30 points</td></tr>
+   <tr><td>Fundamental</td><td>20 points</td></tr>
+   <tr><td>Macro / Sentiment</td><td>15 points</td></tr>
+   <tr><td>Risk / Volatility</td><td>10 points</td></tr>
+  </table>
+  <div class="signal" style="margin-top:12px">
+   <div class="score">0/100</div>
+   <div class="stars">☆☆☆☆☆</div>
+   <h2>NO TRADE</h2>
+   <p class="muted">No verified market inputs. Score disabled.</p>
+  </div>
+ </div>
+ <div class="card">
+  <h2>Technical checklist</h2>
+  <p>□ Market structure / BOS / CHOCH</p>
+  <p>□ RSI / MACD / EMA / ATR</p>
+  <p>□ Candlestick patterns / Volume</p>
+  <p>□ Support / Resistance / Fibonacci</p>
+ </div>
+ <div class="card">
+  <h2>ICT / SMC checklist</h2>
+  <p>□ FVG / IFVG / Order Block</p>
+  <p>□ Liquidity Sweep / BSL / SSL</p>
+  <p>□ MSS / Displacement / Inducement</p>
+  <p>□ Premium / Discount / CRT</p>
+ </div>
+</section>
+
+<section id="fundamental" class="page">
+ <div class="card">
+  <h2>Fundamental & Macro Center</h2>
+  <p class="muted">Economic calendar and macro feeds are not connected. Do not treat this as current news.</p>
+  <table>
+   <tr><td>NFP</td><td>Awaiting data</td></tr>
+   <tr><td>CPI / PCE</td><td>Awaiting data</td></tr>
+   <tr><td>FOMC / Interest rates</td><td>Awaiting data</td></tr>
+   <tr><td>PPI / PMI / GDP</td><td>Awaiting data</td></tr>
+   <tr><td>Unemployment / Jobless Claims</td><td>Awaiting data</td></tr>
+   <tr><td>DXY / US Treasury Yields</td><td>Awaiting data</td></tr>
+   <tr><td>Geopolitical events</td><td>Awaiting data</td></tr>
+  </table>
+ </div>
+ <div class="card">
+  <h2>Gold macro interpretation</h2>
+  <p class="muted">Livingston will compare USD strength, real yields, central bank policy and risk sentiment when reliable feeds are connected.</p>
+ </div>
+</section>
+
+<section id="risk" class="page">
+ <div class="card">
+  <h2>Risk Manager</h2>
+  <label>Account balance ($)</label>
+  <input id="capital" type="number" value="5000">
+  <label>Risk per trade (%)</label>
+  <input id="riskPct" type="number" value="1" step="0.1">
+  <label>Entry price</label>
+  <input id="entry" type="number" placeholder="Enter price">
+  <label>Stop loss price</label>
+  <input id="sl" type="number" placeholder="Enter stop loss">
+  <button class="action" onclick="calcRisk()">Calculate risk</button>
+  <div class="stat">
+   <h3>MAXIMUM PLANNED LOSS</h3>
+   <div id="riskResult" class="value gold">$50.00</div>
+   <p id="riskDistance" class="muted">Enter prices to calculate distance.</p>
+  </div>
+  <p class="muted">Lot size depends on the broker's XAUUSD contract specifications. This calculator does not guess it.</p>
+ </div>
+</section>
+
+<section id="journal" class="page">
+ <div class="card">
+  <h2>Trading Journal</h2>
+  <label>Instrument</label>
+  <input id="instrument" value="XAUUSD">
+  <label>Trade direction</label>
+  <select id="direction"><option>BUY</option><option>SELL</option><option>NO TRADE</option></select>
+  <label>Analysis / Notes</label>
+  <textarea id="journalText" rows="5" placeholder="Write your analysis..."></textarea>
+  <button class="action" onclick="saveJournal()">Save entry</button>
+  <div id="journalList"></div>
+ </div>
+</section>
+</main>
+<footer>LIVINGSTON AI ELITE PRO · DEVELOPMENT BUILD · DEMO ONLY</footer>
+
+<script>
+function page(id,btn){
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+ btn.classList.add('active');
+ if(id==='chartPage' && chart) setTimeout(()=>chart.applyOptions({width:document.getElementById('chart').clientWidth}),100);
+}
+function calcRisk(){
+ let c=Number(capital.value),r=Number(riskPct.value);
+ let e=Number(entry.value),s=Number(sl.value);
+ if(c<=0||r<=0||r>100){riskResult.textContent='Check inputs';return}
+ riskResult.textContent='$'+(c*r/100).toFixed(2);
+ riskDistance.textContent=e>0&&s>0?'Price distance: '+Math.abs(e-s).toFixed(2):'Enter valid entry and stop loss.';
+}
+function saveJournal(){
+ let t=journalText.value.trim();
+ if(!t)return;
+ let old=localStorage.getItem('livingstonJournal')||'';
+ let entries=JSON.parse(old);
+ entries.unshift({instrument:instrument.value,direction:direction.value,note:t,date:new Date().toLocaleString()});
+ localStorage.setItem('livingstonJournal',JSON.stringify(entries));
+ journalText.value='';
+ showJournal();
+}
+function showJournal(){
+ let entries=JSON.parse(localStorage.getItem('livingstonJournal')||'[]');
+ journalList.innerHTML=entries.map(x=>'<div class="stat" style="margin-top:9px"><b>'+safe(x.instrument)+' · '+safe(x.direction)+'</b><p>'+safe(x.note)+'</p><small>'+safe(x.date)+'</small></div>').join('');
+}
+function safe(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+let chart=null,series=null,drawMode='',points=[],drawings=[];
+function initChart(){
+ const el=document.getElementById('chart');
+ if(!window.LightweightCharts){chartStatus.textContent='Chart library could not load. Check internet.';return}
+ chart=LightweightCharts.createChart(el,{
+  width:el.clientWidth,height:340,
+  layout:{background:{color:'#111b27'},textColor:'#aebdd0'},
+  grid:{vertLines:{color:'#202d3c'},horzLines:{color:'#202d3c'}},
+  rightPriceScale:{borderColor:'#34465b'},
+  timeScale:{borderColor:'#34465b',timeVisible:true},
+  crosshair:{mode:0}
+ });
+ series=chart.addCandlestickSeries({upColor:'#20d69a',downColor:'#ff6478',wickUpColor:'#20d69a',wickDownColor:'#ff6478',borderVisible:false});
+ loadDemo('H1');
+ chart.subscribeClick(param=>{
+  if(!drawMode||!param.point||!param.time)return;
+  const price=series.coordinateToPrice(param.point.y);
+  if(price===null)return;
+  points.push({time:param.time,price});
+  if(points.length===2){makeDrawing();points=[];drawMode='';chartStatus.textContent='Demo drawing created.'}
+  else chartStatus.textContent='Select the second point.';
+ });
+ window.addEventListener('resize',()=>chart.applyOptions({width:el.clientWidth}));
+}
+function loadDemo(tf){
+ let now=Math.floor(Date.now()/1000),step={M1:60,M5:300,M15:900,H1:3600,H4:14400,D1:86400}[tf]||3600;
+ let p=4050,data=[];
+ for(let i=90;i>=0;i--){
+  let o=p,c=o+(Math.random()-.49)*8;
+  data.push({time:now-i*step,open:o,high:Math.max(o,c)+Math.random()*3,low:Math.min(o,c)-Math.random()*3,close:c});
+  p=c;
+ }
+ series.setData(data);chart.timeScale().fitContent();
+ chartStatus.textContent=tf+' · Simulated candles, not live market prices.';
+}
+function timeframe(tf){if(chart)loadDemo(tf)}
+function draw(mode){drawMode=mode;points=[];chartStatus.textContent='Select two points on the chart for '+mode+'.'}
+function makeDrawing(){
+ let a=points[0],b=points[1];
+ if(drawMode==='horizontal'){
+  series.createPriceLine({price:b.price,color:'#d9b45c',lineWidth:2,lineStyle:0,axisLabelVisible:true,title:'LEVEL'});
+ }else if(drawMode==='trend'){
+  series.createPriceLine({price:b.price,color:'#20d69a',lineWidth:1,title:'END'});
+  series.createPriceLine({price:a.price,color:'#20d69a',lineWidth:1,title:'START'});
+ }else if(drawMode==='rectangle'){
+  series.createPriceLine({price:a.price,color:'#d9b45c',lineWidth:1,title:'ZONE HIGH'});
+  series.createPriceLine({price:b.price,color:'#d9b45c',lineWidth:1,title:'ZONE LOW'});
+ }else if(drawMode==='fib'){
+  [0,.382,.5,.618,1].forEach(r=>{
+   let v=a.price+(b.price-a.price)*r;
+   series.createPriceLine({price:v,color:'#d9b45c',lineWidth:1,title:'Fib '+(r*100)+'%'});
+  });
+ }
+}
+function clearDrawings(){
+ if(!series)return;
+ series.priceLines().forEach(line=>series.removePriceLine(line));
+ chartStatus.textContent='Price lines cleared. Reload chart to reset.';
+}
+window.addEventListener('load',()=>{initChart();showJournal()});
+</script>
+</body>
+</html>
